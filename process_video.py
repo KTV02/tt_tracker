@@ -47,8 +47,12 @@ def read_video(path, flipped):
         ball_pos (np.array):    detected positions of balls in each frame
         fps (int):              frames per second
     """
-
-    cap = cv2.VideoCapture(path)
+    path = str(path)
+    print("what the fuck bro")
+    print(isinstance(path, str))
+    print(cv2.__version__)
+    print(path)
+    cap = cv2.VideoCapture(path, cv2.CAP_ANY)
     nbr_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     fps = int(cap.get(cv2.CAP_PROP_FPS))
 
@@ -138,8 +142,8 @@ def find_ball(frame: np.ndarray, height: int, width: int) -> np.ndarray:
             y = int(keypoints[i].pt[1])
             val = np.sum(
                 gray[
-                    max([y - 3, 0]) : min([y + 3, height - 1]),
-                    max([x - 3, 0]) : min([x + 3, width - 1]),
+                max([y - 3, 0]): min([y + 3, height - 1]),
+                max([x - 3, 0]): min([x + 3, width - 1]),
                 ]
             )
             if val > maxval:

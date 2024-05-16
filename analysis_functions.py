@@ -8,6 +8,7 @@ import matplotlib.animation as animation
 import matplotlib.cm as cm
 from scipy.ndimage.filters import gaussian_filter
 
+
 xtable = 2.74
 ytable = 1.525
 
@@ -91,6 +92,13 @@ class analyzer:
         self.bp1 = np.transpose(ball_pos_1)
         self.bp2 = np.transpose(ball_pos_2)
 
+        print("positions1")
+        print(ball_pos_1)
+        print(ball_pos_1.shape)
+
+        print("positions2")
+        print(ball_pos_2)
+
         # Points in corners1 and corners2 should correspond according to:
         # p1-p3, p2-p4, p3-p1, p4-p2
         self.pc1 = np.copy(corners1)
@@ -137,7 +145,8 @@ class analyzer:
                 else:
                     self.p3d.append(np.array([0, 0, 0]))
         self.p3d = np.array(self.p3d)
-
+        print("All 3d Points calculated")
+        print(self.p3d)
         # Remove outliers
         samecount = 0
         for i in range(np.size(self.p3d, 0) - 4):
@@ -154,10 +163,13 @@ class analyzer:
                     self.p3d[i + 2, :] = 0
                 else:
                     samecount = 0
-
+        print("Without outliers 3d")
+        print(self.p3d)
         # Extract strokes in every point
         self.points, self.times = divide_into_points(self.p3d)
 
+        print("pointS?")
+        print(self.points)
         # Interpolate between positions in each point
         for i in range(len(self.points)):
             initpos = 0
@@ -192,13 +204,18 @@ class analyzer:
 
         # Put back into original data
         self.p3d = np.zeros(self.p3d.shape)
+        print("original data 3d")
+        print(self.p3d)
         for point, time in zip(self.points, self.times):
             self.p3d[time[0] : time[1], :] = point
         for i in range(len(self.points)):
             self.points[i] = divide_into_strokes(self.points[i])
 
         # Find bounces for every stroke
+
         self.bounces = find_bounces(self.points)
+        print("bounces")
+        print(self.bounces)
 
     def calc_3d_point(self, x1: np.ndarray, x2: np.ndarray) -> np.ndarray:
         """Finds a 3D point from two 2D points
