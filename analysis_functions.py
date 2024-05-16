@@ -8,6 +8,7 @@ import matplotlib.animation as animation
 import matplotlib.cm as cm
 from scipy.ndimage.filters import gaussian_filter
 
+from PIL import Image
 
 xtable = 2.74
 ytable = 1.525
@@ -92,12 +93,41 @@ class analyzer:
         self.bp1 = np.transpose(ball_pos_1)
         self.bp2 = np.transpose(ball_pos_2)
 
-        print("positions1")
-        print(ball_pos_1)
-        print(ball_pos_1.shape)
 
-        print("positions2")
-        print(ball_pos_2)
+        # Extract X and Y coordinates from both cameras
+        X1 = ball_pos_1[0]
+        Y1 = ball_pos_1[1]
+        X2 = ball_pos_2[0]
+        Y2 = ball_pos_2[1]
+
+        # Create a figure and axis
+        plt.figure(figsize=(12, 6))
+
+        # Plot the 2D positions for Camera 1
+        plt.scatter(X1, Y1, c='blue', s=1, label='Camera 1')
+
+        # Plot the 2D positions for Camera 2
+        plt.scatter(X2, Y2, c='red', s=1, label='Camera 2')
+
+        # Adding labels and title
+        plt.xlabel('X Coordinate')
+        plt.ylabel('Y Coordinate')
+        plt.title('2D Positions of Table Tennis Ball for All Frames')
+        plt.legend()
+
+        # Show the plot
+        #plt.show()
+        plt.savefig("2DbothCamerasPlot.png")
+
+        # # Create a numpy array (example)
+        # array = np.random.rand(100, 100, 3) * 255  # For a color image
+        # array = array.astype(np.uint8)  # Convert to unsigned byte type
+        #
+        # # Convert the numpy array to a PIL Image
+        # image = Image.fromarray(array)
+        #
+        # # Save the image
+        # image.save('image.png')
 
         # Points in corners1 and corners2 should correspond according to:
         # p1-p3, p2-p4, p3-p1, p4-p2
@@ -135,6 +165,7 @@ class analyzer:
 
         # Generate 3d points
         self.p3d = []
+        oorange_points_debug=[]
         for j in range(len(self.bp1)):
             if is_zero(self.bp1[j, :]) or is_zero(self.bp2[j, :]):
                 self.p3d.append(np.array([0, 0, 1]))
@@ -143,10 +174,14 @@ class analyzer:
                 if inside_range(point):
                     self.p3d.append(point)
                 else:
+                    oorange_points_debug.append(point)
                     self.p3d.append(np.array([0, 0, 0]))
         self.p3d = np.array(self.p3d)
         print("All 3d Points calculated")
         print(self.p3d)
+        print("All ALl")
+        !OKAY THE PROBLEM IS THAT THE INSIDE RANGE FUNCTION DOES NOT WORK FOR MY SETUP RN -> IT THROWS OUT ALL POINTS
+        print(oorange_points_debug)
         # Remove outliers
         samecount = 0
         for i in range(np.size(self.p3d, 0) - 4):
